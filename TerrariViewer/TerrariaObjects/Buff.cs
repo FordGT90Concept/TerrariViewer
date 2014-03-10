@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -134,7 +134,12 @@ namespace TerrariViewer.TerrariaObjects
         public void SetFromID(int id, int duration)
         {
             this.Id = id;
-            this.Name = BuffDictionary[id].Name;
+            if (BuffDictionary.ContainsKey(id))
+                this.Name = BuffDictionary[id].Name;
+
+            else
+
+                this.Name = BuffDictionary[0].Name;
             this.GameDuration = duration;
             OnPropertyChanged("Name");
         }
