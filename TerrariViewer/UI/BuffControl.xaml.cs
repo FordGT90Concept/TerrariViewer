@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +28,7 @@ namespace TerrariViewer.UI
                 for (int j = 0; j < buff_Grid.ColumnDefinitions.Count; j++)
                 {
                     BuffPreview buffPreview = new BuffPreview();
-                    buffPreview.SetBinding(BuffPreview.DataContextProperty, string.Format("Buffs[{0}]", (i * 5) + j));
+                    buffPreview.SetBinding(BuffPreview.DataContextProperty, string.Format("Buffs[{0}]", (i * buff_Grid.ColumnDefinitions.Count) + j));
 
                     Grid.SetRow(buffPreview, i);
                     Grid.SetColumn(buffPreview, j);
