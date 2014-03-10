@@ -79,3 +79,26 @@
 78	Weapon Imbue: Confetti	Melee attacks cause confetti to appear	0	True
 79	Weapon Imbue: Poison	Melee attacks poison enemies	0	True
 80	Blackout	Light vision severely reduced	0	True
+81	Pet Spider	A spider is following you	0	True
+82	Squashling	A squashling is following you	0	True
+83	Ravens	The ravens will attack your enemies	0	True
+84	Black Cat	A black kitty is following you	0	True
+85	Cursed Sapling	A cursed sapling is following you	0	True
+86	Water Candle	Increased monster spawn rate	0	True
+87	Campfire	Life regen is slightly increased 0	True
+88	Chaos State	Using the Rod of Discord will take life 0	False
+89	Heart Lamp	Life regen is increased	0	True
+90	Rudolph	Riding the red nosed reindeer	0	True
+91	Puppy	A puppy is following you	0	True
+92	Baby Grinch	A baby grinch is following you	0	True
+93	Ammo Box	20% chance not to consume ammo	0	True
+94	Mana Sickness	Magic damage reduced by	0	False
+95	Beetle Endurance	Damage taken reduced by 15%	0	True
+96	Beetle Endurance	Damage taken reduced by 30%	0	True
+97	Beetle Endurance	Damage taken reduced by 45%	0	True
+98	Beetle Might	Melee damage and speed increased by 10%	0	True
+99	Beetle Might	Melee damage and speed increased by 20%	0	True
+100	Beetle Might	Melee damage and speed increased by 30%	0	True
+101	Fairy	A fairy is following you	0	True
+102	Fairy	A fairy is following you	0	True
+103 Wet	You are dripping water	0	True
