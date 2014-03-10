@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,12 +50,12 @@ namespace TerrariViewer.UI
                 dye_Grid.Children.Add(accessoryControl);
             }
 
-            for (int i = 0; i < accessory_Grid.ColumnDefinitions.Count; i++)
+            for (int i = 0; i < accessory_Grid.RowDefinitions.Count; i++)
             {
                 AccessoryControl accessoryControl = new AccessoryControl();
                 accessoryControl.SetBinding(AccessoryControl.DataContextProperty, string.Format("Accessories[{0}]", i));
 
-                Grid.SetColumn(accessoryControl, i);
+                Grid.SetRow(accessoryControl, i);
                 accessory_Grid.Children.Add(accessoryControl);
             }
         }
