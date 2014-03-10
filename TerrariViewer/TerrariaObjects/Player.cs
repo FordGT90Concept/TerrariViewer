@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,9 @@ namespace TerrariViewer.TerrariaObjects
 {
     public class Player : INotifyPropertyChanged
     {
-        private const int CurrentRelease = 69;
+        private const int CurrentRelease = 94;
+
+        private const int ItemLength = 2289;
 
         #region Properties
 
@@ -67,6 +69,50 @@ namespace TerrariViewer.TerrariaObjects
                 }
                 OnPropertyChanged("Hair");
             }
+        }
+
+
+
+        private byte hairDye;
+
+        public byte HairDye
+
+        {
+
+            get { return hairDye; }
+
+            set
+
+            {
+
+                hairDye = value;
+
+                OnPropertyChanged("HairDye");
+
+            }
+
+        }
+
+
+
+        private byte hideVisual;
+
+        public byte HideVisual
+
+        {
+
+            get { return hideVisual; }
+
+            set
+
+            {
+
+                hideVisual = value;
+
+                OnPropertyChanged("HideVisual");
+
+            }
+
         }
 
         private int currentHealth = 200;
@@ -249,13 +295,13 @@ namespace TerrariViewer.TerrariaObjects
                 Accessories[i] = new Item();
             }
 
-            Vanity = new Item[3];
+            Vanity = new Item[8];
             for (int i = 0; i < Vanity.Length; i++)
             {
                 Vanity[i] = new Item();
             }
 
-            Dye = new Item[3];
+            Dye = new Item[8];
             for (int i = 0; i < Dye.Length; i++)
             {
                 Dye[i] = new Item();
@@ -291,7 +337,7 @@ namespace TerrariViewer.TerrariaObjects
                 Safe[i] = new Item();
             }
 
-            Buffs = new Buff[10];
+            Buffs = new Buff[22];
             for (int i = 0; i < Buffs.Length; i++)
             {
                 Buffs[i] = new Buff();
@@ -310,8 +356,10 @@ namespace TerrariViewer.TerrariaObjects
         public void Load(string path)
         {
             bool decryptionCheck;
+#if !DEBUG
             try
             {
+#endif
                 string outputFile = path + ".dat";
                 decryptionCheck = DecryptFile(path, outputFile);
 
@@ -336,22 +384,26 @@ namespace TerrariViewer.TerrariaObjects
                             }
                         }
 
+
+
                         Hair = reader.ReadInt32();
+
+                        if (release >= 82)
+
+                            HairDye = reader.ReadByte();
+
+                        if (release >= 83)
+
+                            HideVisual = reader.ReadByte();
                         if (release <= 17)
                         {
                             if (Hair == 5 || Hair == 6 || Hair == 9 || Hair == 11)
-                            {
-                                Gender = false;
-                            }
+                                Gender = false; // Female
                             else
-                            {
-                                Gender = true;
-                            }
+                                Gender = true; // Male
                         }
                         else
-                        {
                             Gender = reader.ReadBoolean();
-                        }
 
                         CurrentHealth = reader.ReadInt32();
                         MaximumHealth = reader.ReadInt32();
@@ -400,19 +452,46 @@ namespace TerrariViewer.TerrariaObjects
                                 Accessories[i].Prefix = reader.ReadByte();
                             }
 
-                            for (int i = 0; i < Vanity.Length; i++)
+
+
+                            int adjust = 3; // Old had 3 Vanity/Dyes, new has 8.
+
+                            if (release >= 81)
+
+                                adjust = Vanity.Length;
+
+                            for (int i = 0; i < adjust; i++)
+
                             {
+
                                 Vanity[i].SetFromID(reader.ReadInt32());
+
                                 Vanity[i].Prefix = reader.ReadByte();
+
                             }
 
+
+
                             if (release >= 47)
+
                             {
-                                for (int i = 0; i < Dye.Length; i++)
+
+                                adjust = 3;  // Old had 3 Vanity/Dyes, new has 8.
+
+                                if (release >= 81)
+
+                                    adjust = Dye.Length;
+
+                                for (int i = 0; i < adjust; i++)
+
                                 {
+
                                     Dye[i].SetFromID(reader.ReadInt32());
+
                                     Dye[i].Prefix = reader.ReadByte();
+
                                 }
+
                             }
 
                             if (release >= 58)
@@ -420,7 +499,7 @@ namespace TerrariViewer.TerrariaObjects
                                 for (int i = 0; i < Inventory.Length; i++)
                                 {
                                     int id = reader.ReadInt32();
-                                    if (id >= 1615)
+                                    if (id >= ItemLength)
                                     {
                                         Inventory[i].SetFromID(0);
                                     }
@@ -437,7 +516,7 @@ namespace TerrariViewer.TerrariaObjects
                                 for (int i = 0; i < 40; i++)
                                 {
                                     int id = reader.ReadInt32();
-                                    if (id >= 1615)
+                                    if (id >= ItemLength)
                                     {
                                         Inventory[i].SetFromID(0);
                                     }
@@ -453,7 +532,7 @@ namespace TerrariViewer.TerrariaObjects
                             for (int i = 0; i < Coins.Length; i++)
                             {
                                 int id = reader.ReadInt32();
-                                if (id >= 1615)
+                                if (id >= ItemLength)
                                 {
                                     Coins[i].SetFromID(0);
                                 }
@@ -468,7 +547,7 @@ namespace TerrariViewer.TerrariaObjects
                             for (int i = 0; i < Ammo.Length; i++)
                             {
                                 int id = reader.ReadInt32();
-                                if (id >= 1615)
+                                if (id >= ItemLength)
                                 {
                                     Ammo[i].SetFromID(0);
                                 }
@@ -601,20 +680,25 @@ namespace TerrariViewer.TerrariaObjects
                         }
 
                         if (release >= 11)
+
                         {
-                            for (int i = 0; i < Buffs.Length; i++)
-                            {
+
+                            int adjust = Buffs.Length;
+
+                            if (release < 74)
+
+                                adjust = 10;
+
+                            for (int i = 0; i < adjust; i++)
+
                                 Buffs[i].SetFromID(reader.ReadInt32(), reader.ReadInt32());
-                            }
                         }
 
                         for (int i = 0; i < 200; i++)
                         {
                             int num = reader.ReadInt32();
                             if (num == -1)
-                            {
                                 break;
-                            }
                             spX[i] = num;
                             spY[i] = reader.ReadInt32();
                             spI[i] = reader.ReadInt32();
@@ -622,28 +706,30 @@ namespace TerrariViewer.TerrariaObjects
                         }
 
                         if (release >= 16)
-                        {
                             HotbarLocked = reader.ReadBoolean();
-                        }
                         reader.Close();
+
                     }
-                    File.Delete(outputFile);
+
+#if !DEBUG
+            File.Delete(outputFile);
+#endif
                     OnPropertyChanged(null);
                 }
+#if !DEBUG
             }
             catch
             {
                 return;
             }
+#endif
         }
 
         public void Save(string path)
         {
             string destFileName = path + ".bak";
             if (File.Exists(path))
-            {
                 File.Copy(path, destFileName, true);
-            }
 
             string tempFile = path + ".dat";
             using (FileStream stream = new FileStream(tempFile, FileMode.Create))
@@ -653,6 +739,10 @@ namespace TerrariViewer.TerrariaObjects
                 writer.Write(Name);
                 writer.Write(Difficulty);
                 writer.Write(Hair);
+
+                writer.Write(HairDye);
+
+                writer.Write(HideVisual);
                 writer.Write(Gender);
                 writer.Write(CurrentHealth);
                 writer.Write(MaximumHealth);
@@ -683,9 +773,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Armor.Length; i++)
                 {
                     if (Armor[i].Name == null)
-                    {
                         Armor[i].Name = "";
-                    }
                     writer.Write(Armor[i].Id);
                     writer.Write((byte)Armor[i].Prefix);
                 }
@@ -693,9 +781,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Accessories.Length; i++)
                 {
                     if (Accessories[i].Name == null)
-                    {
                         Accessories[i].Name = "";
-                    }
                     writer.Write(Accessories[i].Id);
                     writer.Write((byte)Accessories[i].Prefix);
                 }
@@ -703,9 +789,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Vanity.Length; i++)
                 {
                     if (Vanity[i].Name == null)
-                    {
                         Vanity[i].Name = "";
-                    }
                     writer.Write(Vanity[i].Id);
                     writer.Write((byte)Vanity[i].Prefix);
                 }
@@ -713,9 +797,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Dye.Length; i++)
                 {
                     if (Dye[i].Name == null)
-                    {
                         Dye[i].Name = "";
-                    }
                     writer.Write(Dye[i].Id);
                     writer.Write((byte)Dye[i].Prefix);
                 }
@@ -723,9 +805,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Inventory.Length; i++)
                 {
                     if (Inventory[i].Name == null)
-                    {
                         Inventory[i].Name = "";
-                    }
                     writer.Write(Inventory[i].Id);
                     writer.Write(Inventory[i].StackSize);
                     writer.Write((byte)Inventory[i].Prefix);
@@ -734,9 +814,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Coins.Length; i++)
                 {
                     if (Coins[i].Name == null)
-                    {
                         Coins[i].Name = "";
-                    }
                     writer.Write(Coins[i].Id);
                     writer.Write(Coins[i].StackSize);
                     writer.Write((byte)Coins[i].Prefix);
@@ -745,9 +823,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Ammo.Length; i++)
                 {
                     if (Ammo[i].Name == null)
-                    {
                         Ammo[i].Name = "";
-                    }
                     writer.Write(Ammo[i].Id);
                     writer.Write(Ammo[i].StackSize);
                     writer.Write((byte)Ammo[i].Prefix);
@@ -756,9 +832,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Bank.Length; i++)
                 {
                     if (Bank[i].Name == null)
-                    {
                         Bank[i].Name = "";
-                    }
                     writer.Write(Bank[i].Id);
                     writer.Write(Bank[i].StackSize);
                     writer.Write((byte)Bank[i].Prefix);
@@ -767,9 +841,7 @@ namespace TerrariViewer.TerrariaObjects
                 for (int i = 0; i < Safe.Length; i++)
                 {
                     if (Safe[i].Name == null)
-                    {
                         Safe[i].Name = "";
-                    }
                     writer.Write(Safe[i].Id);
                     writer.Write(Safe[i].StackSize);
                     writer.Write((byte)Safe[i].Prefix);
@@ -783,7 +855,7 @@ namespace TerrariViewer.TerrariaObjects
 
                 for (int i = 0; i < 200; i++)
                 {
-                    if (spN[i] == null)
+                    if (spN[i] == String.Empty)
                     {
                         writer.Write(-1);
                         break;
@@ -798,7 +870,9 @@ namespace TerrariViewer.TerrariaObjects
                 writer.Close();
             }
             Player.EncryptFile(tempFile, path);
-            //File.Delete(tempFile);
+#if !DEBUG
+            File.Delete(tempFile);
+#endif
             
         }
 
