@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -159,7 +159,14 @@ namespace TerrariViewer.TerrariaObjects
 
         public void SetFromID(int id)
         {
-            Name = itemDictionary[id].Name;
+
+            if (itemDictionary.ContainsKey(id))
+
+                Name = itemDictionary[id].Name;
+
+            else
+
+                Name = itemDictionary[0].Name;
             //switch (id) 
             //{
             //    case -1:
